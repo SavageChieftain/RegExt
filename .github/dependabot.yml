@@ -9,8 +9,6 @@ updates:
       time: "09:00"
       timezone: "Asia/Tokyo"
     open-pull-requests-limit: 10
-    reviewers:
-      - "SavageChieftain"
     assignees:
       - "SavageChieftain"
     commit-message:
@@ -40,8 +38,6 @@ updates:
       time: "09:00"
       timezone: "Asia/Tokyo"
     open-pull-requests-limit: 5
-    reviewers:
-      - "SavageChieftain"
     assignees:
       - "SavageChieftain"
     commit-message:
