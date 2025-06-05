@@ -1,5 +1,9 @@
 {
-  "name": "regext",
+  "name": "@savagechieftain/regext",
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
   "version": "1.0.0",
   "description": "Extended RegExp class with additional utility methods for JavaScript and TypeScript",
   "keywords": [
