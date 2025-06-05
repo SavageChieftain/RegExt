@@ -84,4 +84,5 @@ jobs:
           GIT_AUTHOR_EMAIL: 41898282+github-actions[bot]@users.noreply.github.com
           GIT_COMMITTER_NAME: github-actions[bot]
           GIT_COMMITTER_EMAIL: 41898282+github-actions[bot]@users.noreply.github.com
+          LEFTHOOK: 0 # Disable lefthook for semantic-release commits
         run: npm run semantic-release
