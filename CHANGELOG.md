@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/SavageChieftain/RegExt/compare/v1.0.0...v1.1.0) (2025-06-05)
+
+
+### Features
+
+* add test for handling empty pattern with no match in loopExec ([0811b82](https://github.com/SavageChieftain/RegExt/commit/0811b8244750ecf919e36411616c47c946e29f43))
+
 # 1.0.0 (2025-06-05)
 
 
