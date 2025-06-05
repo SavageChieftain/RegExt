@@ -1,0 +1,18 @@
+# CodeQL Configuration for RegExt
+
+name: "CodeQL Analysis"
+
+query-filters:
+  - include:
+      kind: problem
+      problem.severity:
+        - error
+        - warning
+
+paths-ignore:
+  - "dist/**"
+  - "coverage/**"
+  - "node_modules/**"
+  - "**/*.test.ts"
+  - "**/*.config.js"
+  - "**/*.config.ts"
