@@ -1,24 +1,70 @@
 {
   "name": "regext",
-  "version": "0.0.1",
-  "description": "extend RegExp",
+  "version": "1.0.0",
+  "description": "Extended RegExp class with additional utility methods for JavaScript and TypeScript",
+  "keywords": [
+    "regex",
+    "regexp",
+    "regular-expression",
+    "string",
+    "pattern",
+    "match",
+    "extract",
+    "replace",
+    "utility",
+    "typescript"
+  ],
   "author": "SavageChieftain <chieftain@savage-tribe.com>",
   "license": "MIT",
-  "private": true,
-  "main": "index.js",
-  "scripts": {
-    "test": "jest"
+  "homepage": "https://github.com/SavageChieftain/regext#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SavageChieftain/regext.git"
   },
-  "jest": {
-    "transform": {
-      "^.+\\.jsx?$": "babel-jest"
-    }
+  "bugs": {
+    "url": "https://github.com/SavageChieftain/regext/issues"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist/",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf dist",
+    "test": "vitest run --coverage",
+    "lint": "eslint . --max-warnings 0",
+    "lint:md": "markdownlint-cli2",
+    "type-check": "tsc --noEmit",
+    "semantic-release": "semantic-release",
+    "prepare": "lefthook install",
+    "prepublishOnly": "npm run clean && npm run build && npm run lint && npm run lint:md && npm run type-check && npm run test"
   },
   "devDependencies": {
-    "@babel/core": "^7.25.2",
-    "@babel/preset-env": "^7.25.4",
-    "@babel/preset-react": "^7.24.7",
-    "babel-jest": "^29.7.0",
-    "jest": "^29.7.0"
+    "@commitlint/cli": "^19.8.1",
+    "@commitlint/config-conventional": "^19.8.1",
+    "@eslint/create-config": "^1.9.0",
+    "@eslint/js": "^9.28.0",
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/github": "^11.0.3",
+    "@semantic-release/npm": "^12.0.1",
+    "@types/node": "^22.15.29",
+    "@vitest/coverage-v8": "^3.2.1",
+    "@vitest/ui": "^3.2.1",
+    "eslint": "^9.28.0",
+    "lefthook": "^1.11.13",
+    "markdownlint-cli2": "^0.18.1",
+    "semantic-release": "^24.2.5",
+    "tsx": "^4.19.4",
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.1"
   }
 }
