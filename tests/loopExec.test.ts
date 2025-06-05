@@ -77,6 +77,15 @@ describe("RegExt - loopExec", () => {
       expect(result?.[0].index).toBe(0);
     });
 
+    it("should handle empty pattern with no match", () => {
+      // Create a regex that would result in no match even with empty pattern
+      const emptyPatternRegex = new RegExt("", "g");
+      // Set lastIndex to beyond the string length to force null match
+      emptyPatternRegex.lastIndex = 10;
+      const result = emptyPatternRegex.loopExec("abc");
+      expect(result).toBeNull();
+    });
+
     it("should handle patterns that match entire input", () => {
       const fullMatchRegex = new RegExt(".*", "g");
       const result = fullMatchRegex.loopExec("abc");
