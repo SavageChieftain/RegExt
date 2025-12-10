@@ -48,7 +48,7 @@ Related to #
 ### Compatibility
 
 - [ ] Verified no breaking changes (or documented if any)
-- [ ] Verified compatibility with Node.js 20+
+- [ ] Verified compatibility with Node.js 24+
 
 ## Breaking Changes
 
