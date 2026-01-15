@@ -50,7 +50,7 @@ import RegExt from 'regext';
 ## Quick Start
 
 ```javascript
-import RegExt from 'regext';
+import RegExt, { escape } from 'regext';
 
 const regex = new RegExt('\\d+', 'g');
 
@@ -65,10 +65,19 @@ console.log(count); // 3
 // Safe testing without affecting lastIndex
 const hasNumbers = regex.safeTest('abc123');
 console.log(hasNumbers); // true
+
+// Use escape mode for literal string matching
+const literalRegex = new RegExt('$100', { escape: true, flags: 'g' });
+console.log(literalRegex.test('$100')); // true
+
+// Or use the escape utility function
+const pattern = escape('$100');
+const regex2 = new RegExt(pattern, 'g');
 ```
 
 ## Methods Overview
 
+### Instance Methods
 - **`loopExec(str)`** - Get all matches with infinite loop prevention
 - **`safeTest(str)`** - Test without modifying lastIndex
 - **`extract(str)`** - Extract matched strings as array
@@ -77,6 +86,12 @@ console.log(hasNumbers); // true
 - **`replaceFirst(str, replacement)`** - Replace first match only
 - **`count(str)`** - Count number of matches
 - **`findLast(str)`** - Get the last match
+
+### Utility Functions
+- **`escape(str)`** - Escape special regex characters for literal matching
+
+### Constructor Options
+- **Escape Mode** - Automatically escape patterns for literal string matching
 
 ## Documentation
 

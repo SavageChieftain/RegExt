@@ -2,6 +2,94 @@
 
 This document provides practical examples of using RegExt in real-world scenarios.
 
+## Escape Mode for User Input
+
+### Safe Search with User Input
+
+```javascript
+import RegExt, { escape } from 'regext';
+
+// User enters a search term with special characters
+const userSearch = '$100';
+
+// Option 1: Use escape mode
+const regex1 = new RegExt(userSearch, { escape: true, flags: 'g' });
+const found1 = regex1.test('Price: $100'); // true
+
+// Option 2: Use escape function
+const pattern = escape(userSearch);
+const regex2 = new RegExt(pattern, 'g');
+const found2 = regex2.test('Price: $100'); // true
+```
+
+### Email Search (Literal)
+
+```javascript
+const userEmail = 'user+tag@example.com';
+const text = 'Contact: user+tag@example.com or admin@example.com';
+
+// Escape mode makes the search literal
+const emailRegex = new RegExt(userEmail, { escape: true });
+console.log(emailRegex.test(text)); // true
+
+// Count occurrences
+const count = new RegExt(userEmail, { escape: true, flags: 'g' }).count(text);
+console.log(count); // 1
+```
+
+### File Path Matching
+
+```javascript
+const filePath = 'C:\\Users\\Documents\\file.txt';
+const logs = `
+Opened: C:\\Users\\Documents\\file.txt
+Saved: C:\\Users\\Documents\\backup.txt
+Closed: C:\\Users\\Documents\\file.txt
+`;
+
+// Escape backslashes and dots automatically
+const pathRegex = new RegExt(filePath, { escape: true, flags: 'g' });
+const occurrences = pathRegex.count(logs); // 2
+```
+
+### URL Parameter Search
+
+```javascript
+import { escape } from 'regext';
+
+const paramToFind = '?query=value&page=1';
+const url = 'https://example.com?query=value&page=1';
+
+// Escape special characters like ?, =, &
+const pattern = escape(paramToFind);
+const regex = new RegExt(pattern);
+console.log(regex.test(url)); // true
+```
+
+### Price Tag Replacement
+
+```javascript
+const oldPrice = '$29.99';
+const newPrice = '$19.99';
+const text = 'Sale! Was $29.99, now only $29.99!';
+
+// Use escape mode to replace literal price
+const priceRegex = new RegExt(oldPrice, { escape: true, flags: 'g' });
+const updated = priceRegex.replaceAll(text, newPrice);
+// "Sale! Was $19.99, now only $19.99!"
+```
+
+### Mathematical Expression Search
+
+```javascript
+const expression = '2 + 2 = 4';
+const mathText = 'The answer is 2 + 2 = 4, not 2 + 2 = 5';
+
+// Escape operators like +, =
+const mathRegex = new RegExt(expression, { escape: true, flags: 'g' });
+const count = mathRegex.count(mathText); // 2
+```
+
 ## Log Analysis
 
 ```javascript

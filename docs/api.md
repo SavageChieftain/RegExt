@@ -4,27 +4,46 @@ This document provides a comprehensive reference for all RegExt methods.
 
 ## Quick Overview
 
-RegExt extends the standard JavaScript RegExp class with 8 powerful utility methods:
+RegExt extends the standard JavaScript RegExp class with 8 powerful utility methods and additional features:
 
 - **Core Methods**: `loopExec()`, `safeTest()` - Safe and enhanced regex execution
 - **Replacement**: `replaceAll()`, `replaceFirst()` - Flexible string replacement
 - **Extraction**: `extract()`, `extractGroups()` - Get matches and capture groups
 - **Utilities**: `count()`, `findLast()` - Count matches and find patterns
+- **Escape Utility**: `escape()` - Escape special characters for literal matching
+- **Escape Mode**: Constructor option for automatic pattern escaping
 
 ## Constructor
 
-### `new RegExt(pattern, flags?)`
+### `new RegExt(pattern, flagsOrOptions?)`
 
 Creates a new RegExt instance.
 
 **Parameters:**
 - `pattern` (string | RegExp): The regular expression pattern
-- `flags` (string, optional): Optional flags for the regular expression
+- `flagsOrOptions` (string | RegExtOptions, optional): Flags string or options object
+  - If string: Regular expression flags (e.g., 'g', 'i', 'gi')
+  - If object:
+    - `flags` (string, optional): Regular expression flags
+    - `escape` (boolean, optional): If true, escape special characters in pattern
 
 **Example:**
 ```javascript
+// Traditional usage with flags
 const regex = new RegExt('\\d+', 'g');
 const regexFromRegExp = new RegExt(/\d+/g);
+
+// Using options object
+const regex2 = new RegExt('\\d+', { flags: 'g' });
+
+// Using escape mode for literal matching
+const literalRegex = new RegExt('$100', { escape: true, flags: 'g' });
+literalRegex.test('$100'); // true
+
+// Escape user input safely
+const userInput = '(test)';
+const safeRegex = new RegExt(userInput, { escape: true });
+safeRegex.test('(test)'); // true
 ```
 
 ## Core Methods
@@ -182,6 +201,42 @@ Find the last match.
 const regex = new RegExt('\\d+', 'g');
 const last = regex.findLast('123 456 789');
 // ['789', index: 8, ...]
+```
+
+## Utility Functions
+
+### `escape(str)`
+
+Escape special regular expression characters in a string for literal matching.
+
+**Parameters:**
+- `str` (string): The string to escape
+
+**Returns:**
+- `string`: The escaped string safe for use in RegExp patterns
+
+**Escaped Characters:**
+`. * + ? ^ $ { } ( ) | [ ] \`
+
+**Example:**
+```javascript
+import { escape } from 'regext';
+
+// Escape special characters
+const escaped = escape('$100 + $50');
+// "\\$100 \\+ \\$50"
+
+// Use in RegExp constructor
+const regex = new RegExp(escape(userInput), 'g');
+
+// Use with RegExt
+const regex2 = new RegExt(escape('user@example.com'));
+regex2.test('user@example.com'); // true
+
+// Common use cases
+escape('(test)');  // "\\(test\\)"
+escape('[a-z]+');  // "\\[a-z\\]\\+"
+escape('$1.99');   // "\\$1\\.99"
 ```
 
 ## Properties
