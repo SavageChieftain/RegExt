@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, expect } from "vitest";
 import RegExt from "../src/index";
 
 describe("RegExt - count", () => {
@@ -24,5 +24,19 @@ describe("RegExt - count", () => {
     const emptyRegex = new RegExt("", "g");
     const result = emptyRegex.count("abc");
     expect(result).toBe(1);
+  });
+
+  it("should return 0 for null loopExec result", () => {
+    const regex = new RegExt("\\d+", "g");
+    const result = regex.count("abc");
+    expect(result).toBe(0);
+  });
+
+  describe("with escape mode", () => {
+    it("should count literal strings when escape is true", () => {
+      const regex = new RegExt("$100", { escape: true, flags: "g" });
+      const result = regex.count("I have $100 and $100 more");
+      expect(result).toBe(2);
+    });
   });
 });

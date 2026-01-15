@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, expect } from "vitest";
 import RegExt from "../src/index";
 
 describe("RegExt - findLast", () => {
@@ -28,5 +28,20 @@ describe("RegExt - findLast", () => {
     expect(result?.[0]).toBe("789-012");
     expect(result?.[1]).toBe("789");
     expect(result?.[2]).toBe("012");
+  });
+
+  it("should return null for null loopExec result", () => {
+    const regex = new RegExt("\\d+", "g");
+    const result = regex.findLast("abc");
+    expect(result).toBeNull();
+  });
+
+  describe("with escape mode", () => {
+    it("should find last literal string when escape is true", () => {
+      const regex = new RegExt("$100", { escape: true, flags: "g" });
+      const result = regex.findLast("I have $100 and $100 more");
+      expect(result?.[0]).toBe("$100");
+      expect(result?.index).toBe(16);
+    });
   });
 });

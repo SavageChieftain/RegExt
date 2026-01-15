@@ -53,4 +53,12 @@ describe("RegExt - replaceAll", () => {
     const result = emptyRegex.replaceAll("abc", "X");
     expect(result).toBe("Xabc");
   });
+
+  describe("with escape mode", () => {
+    it("should replace literal strings when escape is true", () => {
+      const regex = new RegExt("$100", { escape: true, flags: "g" });
+      const result = regex.replaceAll("I have $100 and $100 more", "$200");
+      expect(result).toBe("I have $200 and $200 more");
+    });
+  });
 });

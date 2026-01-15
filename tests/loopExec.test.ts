@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach } from "vitest";
 import RegExt from "../src/index";
 
 describe("RegExt - loopExec", () => {
-  let regex;
+  let regex: RegExt;
 
   beforeEach(() => {
     regex = new RegExt("a(b)c", "g");
@@ -11,17 +11,44 @@ describe("RegExt - loopExec", () => {
   it("should return all matches when pattern is found", () => {
     const result = regex.loopExec("abc abc abc");
     expect(result).toHaveLength(3);
-    expect(result[0][0]).toBe("abc");
-    expect(result[0][1]).toBe("b");
-    expect(result[1][0]).toBe("abc");
-    expect(result[1][1]).toBe("b");
-    expect(result[2][0]).toBe("abc");
-    expect(result[2][1]).toBe("b");
+    expect(result![0][0]).toBe("abc");
+    expect(result![0][1]).toBe("b");
+    expect(result![1][0]).toBe("abc");
+    expect(result![1][1]).toBe("b");
+    expect(result![2][0]).toBe("abc");
+    expect(result![2][1]).toBe("b");
   });
 
   it("should return null when no pattern is found", () => {
     const result = regex.loopExec("def def def");
     expect(result).toBeNull();
+  });
+
+  it("should handle non-global regex with match", () => {
+    const nonGlobalRegex = new RegExt("\\d+");
+    const result = nonGlobalRegex.loopExec("123 456");
+    expect(result).toHaveLength(1);
+    expect(result![0][0]).toBe("123");
+  });
+
+  it("should handle non-global regex without match", () => {
+    const nonGlobalRegex = new RegExt("\\d+");
+    const result = nonGlobalRegex.loopExec("abc def");
+    expect(result).toBeNull();
+  });
+
+  it("should handle empty pattern without global flag", () => {
+    const emptyRegex = new RegExt("");
+    const result = emptyRegex.loopExec("abc");
+    expect(result).toHaveLength(1);
+    expect(result![0][0]).toBe("");
+  });
+
+  it("should handle empty pattern without global flag on empty string", () => {
+    const emptyRegex = new RegExt("");
+    const result = emptyRegex.loopExec("");
+    expect(result).toHaveLength(1);
+    expect(result![0][0]).toBe("");
   });
 
   describe("edge cases", () => {
@@ -77,13 +104,13 @@ describe("RegExt - loopExec", () => {
       expect(result?.[0].index).toBe(0);
     });
 
-    it("should handle empty pattern with no match", () => {
-      // Create a regex that would result in no match even with empty pattern
+    it("should handle empty pattern with lastIndex reset", () => {
+      // Empty pattern always matches, lastIndex should be reset to 0
       const emptyPatternRegex = new RegExt("", "g");
-      // Set lastIndex to beyond the string length to force null match
       emptyPatternRegex.lastIndex = 10;
       const result = emptyPatternRegex.loopExec("abc");
-      expect(result).toBeNull();
+      expect(result).not.toBeNull();
+      expect(result?.[0][0]).toBe("");
     });
 
     it("should handle patterns that match entire input", () => {
@@ -92,6 +119,22 @@ describe("RegExt - loopExec", () => {
       expect(result).toHaveLength(2);
       expect(result?.[0][0]).toBe("abc");
       expect(result?.[1][0]).toBe("");
+    });
+
+    it("should handle moderately long strings", () => {
+      const regex = new RegExt("a+", "g");
+      const longString = "a".repeat(1000);
+
+      const result = regex.loopExec(longString);
+      expect(result).toHaveLength(1);
+      expect(result![0][0]).toBe(longString);
+    });
+
+    it("should handle null and undefined inputs", () => {
+      const regex = new RegExt("\\d+", "g");
+
+      expect(() => regex.loopExec(null as any)).toThrow();
+      expect(() => regex.loopExec(undefined as any)).toThrow();
     });
   });
 });

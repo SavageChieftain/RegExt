@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach } from "vitest";
 import RegExt from "../src/index";
 
 describe("RegExt - safeTest", () => {
-  let regex;
+  let regex: RegExt;
 
   beforeEach(() => {
     regex = new RegExt("a(b)c", "g");
@@ -110,6 +110,61 @@ describe("RegExt - safeTest", () => {
       testRegex.safeTest("123 456 789");
       testRegex.safeTest("abc def ghi");
       expect(testRegex.lastIndex).toBe(10);
+    });
+
+    it("should handle null and undefined inputs", () => {
+      const regex = new RegExt("\\d+", "g");
+
+      expect(() => regex.safeTest(null as any)).toThrow();
+      expect(() => regex.safeTest(undefined as any)).toThrow();
+    });
+
+    it("should handle dotAll flag", () => {
+      const dotAllRegex = new RegExt("a.b", "gs");
+      const text = "a\nb";
+
+      const result = dotAllRegex.safeTest(text);
+      expect(result).toBe(true);
+    });
+  });
+
+  describe("with escape mode", () => {
+    it("should match literal special characters when escape is true", () => {
+      const regex = new RegExt("$100", { escape: true });
+      expect(regex.safeTest("$100")).toBe(true);
+      expect(regex.safeTest("100")).toBe(false);
+    });
+
+    it("should match literal dots when escape is true", () => {
+      const regex = new RegExt("a.b", { escape: true });
+      expect(regex.safeTest("a.b")).toBe(true);
+      expect(regex.safeTest("axb")).toBe(false);
+    });
+
+    it("should match literal brackets when escape is true", () => {
+      const regex = new RegExt("[abc]", { escape: true });
+      expect(regex.safeTest("[abc]")).toBe(true);
+      expect(regex.safeTest("a")).toBe(false);
+    });
+
+    it("should work with flags when escape is true", () => {
+      const regex = new RegExt("$100", { escape: true, flags: "gi" });
+      expect(regex.safeTest("$100")).toBe(true);
+      expect(regex.safeTest("$100")).toBe(true);
+    });
+
+    it("should match literal asterisks when escape is true", () => {
+      const regex = new RegExt("a*b", { escape: true });
+      expect(regex.safeTest("a*b")).toBe(true);
+      expect(regex.safeTest("ab")).toBe(false);
+      expect(regex.safeTest("aab")).toBe(false);
+    });
+
+    it("should match literal plus signs when escape is true", () => {
+      const regex = new RegExt("a+b", { escape: true });
+      expect(regex.safeTest("a+b")).toBe(true);
+      expect(regex.safeTest("ab")).toBe(false);
+      expect(regex.safeTest("aab")).toBe(false);
     });
   });
 });
