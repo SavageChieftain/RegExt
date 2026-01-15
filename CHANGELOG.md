@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/SavageChieftain/RegExt/compare/v1.1.0...v1.2.0) (2026-01-15)
+
+
+### Features
+
+* add escape utility and fix coverage in _shouldBreakLoop ([39ca0d3](https://github.com/SavageChieftain/RegExt/commit/39ca0d32f9787ddab3b33842b366101c73100233))
+
 # [1.1.0](https://github.com/SavageChieftain/RegExt/compare/v1.0.0...v1.1.0) (2025-06-05)
 
 
