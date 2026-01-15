@@ -4,6 +4,32 @@
  * Extends the standard RegExp class with additional utility methods
  * for more convenient string matching and manipulation.
  */
+
+export { escape } from "./utils/escape";
+import { escape } from "./utils/escape";
+
+/**
+ * Options for creating a RegExt instance
+ */
+export interface RegExtOptions {
+  /** Flags for the regular expression (e.g., 'g', 'i', 'gi') */
+  flags?: string;
+  /** If true, the pattern will be escaped for literal matching */
+  escape?: boolean;
+}
+
+/**
+ * Represents a chunk of text with match information
+ */
+export interface TextChunk {
+  /** The text content of this chunk */
+  text: string;
+  /** Whether this chunk is a regex match */
+  isMatch: boolean;
+  /** The starting index of this chunk in the original string */
+  index: number;
+}
+
 export default class RegExt extends RegExp {
   /** The original pattern used to create this RegExt instance */
   public readonly originalPattern: string | RegExp;
@@ -11,11 +37,71 @@ export default class RegExt extends RegExp {
   /**
    * Creates a new RegExt instance
    * @param pattern - The regular expression pattern
-   * @param flags - Optional flags for the regular expression
+   * @param flagsOrOptions - Optional flags string or options object
+   *
+   * @example
+   * ```typescript
+   * // Traditional usage with flags
+   * const regex1 = new RegExt('\\d+', 'g');
+   *
+   * // Using escape mode for literal matching
+   * const regex2 = new RegExt('$100', { flags: 'g', escape: true });
+   * regex2.test('$100'); // true
+   *
+   * // Escape mode with user input
+   * const userInput = '(test)';
+   * const regex3 = new RegExt(userInput, { escape: true });
+   * regex3.test('(test)'); // true
+   * ```
    */
-  constructor(pattern: string | RegExp, flags?: string) {
-    super(pattern, flags);
+  constructor(
+    pattern: string | RegExp,
+    flagsOrOptions?: string | RegExtOptions
+  ) {
+    const { processedPattern, flags } = RegExt._processConstructorArgs(
+      pattern,
+      flagsOrOptions
+    );
+    super(processedPattern, flags);
     this.originalPattern = pattern;
+  }
+
+  /**
+   * Process constructor arguments to handle both string flags and options object
+   * @private
+   */
+  private static _processConstructorArgs(
+    pattern: string | RegExp,
+    flagsOrOptions?: string | RegExtOptions
+  ): { processedPattern: string | RegExp; flags?: string } {
+    // If pattern is already a RegExp, return as-is
+    if (pattern instanceof RegExp) {
+      const flags =
+        typeof flagsOrOptions === "string"
+          ? flagsOrOptions
+          : flagsOrOptions?.flags;
+      return flags !== undefined
+        ? { processedPattern: pattern, flags }
+        : { processedPattern: pattern };
+    }
+
+    // Handle string flags (backward compatibility)
+    if (typeof flagsOrOptions === "string") {
+      return { processedPattern: pattern, flags: flagsOrOptions };
+    }
+
+    // Handle options object
+    if (flagsOrOptions?.escape) {
+      const escapedPattern = escape(pattern);
+      return flagsOrOptions.flags !== undefined
+        ? { processedPattern: escapedPattern, flags: flagsOrOptions.flags }
+        : { processedPattern: escapedPattern };
+    }
+
+    // No escape, return pattern as-is
+    return flagsOrOptions?.flags !== undefined
+      ? { processedPattern: pattern, flags: flagsOrOptions.flags }
+      : { processedPattern: pattern };
   }
 
   /**
@@ -27,10 +113,6 @@ export default class RegExt extends RegExp {
   loopExec(str: string): RegExpExecArray[] | null {
     if (str === null || str === undefined) {
       throw new TypeError("Input string cannot be null or undefined");
-    }
-    if (this.originalPattern === "") {
-      const match = this.exec(str);
-      return match ? [match] : null;
     }
 
     return this._executeLoop(str);
@@ -45,6 +127,21 @@ export default class RegExt extends RegExp {
     let match: RegExpExecArray | null;
     const originalLastIndex = this.lastIndex;
     this.lastIndex = 0;
+
+    // Without global flag, exec() only returns first match
+    if (!this.global) {
+      match = this.exec(str);
+      this.lastIndex = originalLastIndex;
+      return match ? [match] : null;
+    }
+
+    // Special handling for empty pattern to avoid excessive matches
+    // Empty pattern always matches at position 0
+    if (this.originalPattern === "") {
+      match = this.exec(str);
+      this.lastIndex = originalLastIndex;
+      return [match!];
+    }
 
     while ((match = this.exec(str))) {
       result.push(match);
@@ -75,12 +172,10 @@ export default class RegExt extends RegExp {
     // When match reaches the end of the string
     if (this.lastIndex >= str.length) {
       // Check for zero-length match at the end
-      if (match.index + match[0].length === str.length && match[0].length > 0) {
-        const finalMatch = this.exec(str);
-        if (finalMatch && finalMatch[0].length === 0) {
-          // In this case, result needs to be added, so handle in caller
-          return false;
-        }
+      const finalMatch = this.exec(str);
+      if (finalMatch) {
+        // In this case, result needs to be added, so handle in caller
+        return false;
       }
       return true;
     }
@@ -185,5 +280,53 @@ export default class RegExt extends RegExp {
   findLast(str: string): RegExpExecArray | null {
     const matches = this.loopExec(str);
     return matches ? matches[matches.length - 1] : null;
+  }
+
+  /**
+   * Split the string into chunks of matched and unmatched parts
+   * @param str - The string to split into chunks
+   * @returns Array of chunks with text, match status, and position
+   *
+   * @example
+   * ```typescript
+   * const regex = new RegExt('error', 'gi');
+   * const chunks = regex.chunks('No error found');
+   * // [
+   * //   { text: 'No ', isMatch: false, index: 0 },
+   * //   { text: 'error', isMatch: true, index: 3 },
+   * //   { text: ' found', isMatch: false, index: 8 }
+   * // ]
+   * ```
+   */
+  chunks(str: string): TextChunk[] {
+    const matches = this.loopExec(str);
+    if (!matches?.length) {
+      return str.length ? [{ text: str, isMatch: false, index: 0 }] : [];
+    }
+
+    const result: TextChunk[] = [];
+    let pos = 0;
+
+    for (let i = 0, len = matches.length; i < len; i++) {
+      const { index: start, 0: matchText } = matches[i];
+
+      // Add unmatched chunk before match (if any)
+      pos < start &&
+        result.push({
+          text: str.slice(pos, start),
+          isMatch: false,
+          index: pos,
+        });
+
+      // Add matched chunk
+      result.push({ text: matchText, isMatch: true, index: start });
+      pos = start + matchText.length;
+    }
+
+    // Add final unmatched chunk (if any)
+    pos < str.length &&
+      result.push({ text: str.slice(pos), isMatch: false, index: pos });
+
+    return result;
   }
 }
