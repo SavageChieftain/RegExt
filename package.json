@@ -64,7 +64,7 @@
     "@vitest/coverage-v8": "^4.0.17",
     "@vitest/ui": "^4.0.17",
     "eslint": "^9.28.0",
-    "lefthook": "^1.11.13",
+    "lefthook": "^2.0.15",
     "markdownlint-cli2": "^0.20.0",
     "semantic-release": "^25.0.1",
     "tsx": "^4.19.4",
