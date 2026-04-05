@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import RegExt from "../src/index";
+import RegExt from "../index";
 
 describe("RegExt - extract", () => {
   it("should extract all matches", () => {

@@ -56,14 +56,27 @@ export default class RegExt extends RegExp {
    */
   constructor(
     pattern: string | RegExp,
-    flagsOrOptions?: string | RegExtOptions
+    flagsOrOptions?: string | RegExtOptions,
   ) {
     const { processedPattern, flags } = RegExt._processConstructorArgs(
       pattern,
-      flagsOrOptions
+      flagsOrOptions,
     );
     super(processedPattern, flags);
     this.originalPattern = pattern;
+  }
+
+  /**
+   * Extract flags from the constructor arguments
+   * @private
+   */
+  private static _resolveFlags(
+    flagsOrOptions?: string | RegExtOptions,
+  ): string | undefined {
+    if (typeof flagsOrOptions === "string") {
+      return flagsOrOptions;
+    }
+    return flagsOrOptions?.flags;
   }
 
   /**
@@ -72,36 +85,25 @@ export default class RegExt extends RegExp {
    */
   private static _processConstructorArgs(
     pattern: string | RegExp,
-    flagsOrOptions?: string | RegExtOptions
+    flagsOrOptions?: string | RegExtOptions,
   ): { processedPattern: string | RegExp; flags?: string } {
+    const flags = RegExt._resolveFlags(flagsOrOptions);
+
     // If pattern is already a RegExp, return as-is
     if (pattern instanceof RegExp) {
-      const flags =
-        typeof flagsOrOptions === "string"
-          ? flagsOrOptions
-          : flagsOrOptions?.flags;
       return flags !== undefined
         ? { processedPattern: pattern, flags }
         : { processedPattern: pattern };
     }
 
-    // Handle string flags (backward compatibility)
-    if (typeof flagsOrOptions === "string") {
-      return { processedPattern: pattern, flags: flagsOrOptions };
-    }
+    // Handle escape option
+    const shouldEscape =
+      typeof flagsOrOptions === "object" && flagsOrOptions?.escape;
+    const processedPattern = shouldEscape ? escape(pattern) : pattern;
 
-    // Handle options object
-    if (flagsOrOptions?.escape) {
-      const escapedPattern = escape(pattern);
-      return flagsOrOptions.flags !== undefined
-        ? { processedPattern: escapedPattern, flags: flagsOrOptions.flags }
-        : { processedPattern: escapedPattern };
-    }
-
-    // No escape, return pattern as-is
-    return flagsOrOptions?.flags !== undefined
-      ? { processedPattern: pattern, flags: flagsOrOptions.flags }
-      : { processedPattern: pattern };
+    return flags !== undefined
+      ? { processedPattern, flags }
+      : { processedPattern };
   }
 
   /**
@@ -207,20 +209,26 @@ export default class RegExt extends RegExp {
    */
   replaceAll(
     str: string,
-    replacement: string | ((substring: string, ...args: any[]) => string)
+    replacement: string | ((substring: string, ...args: unknown[]) => string),
   ): string {
     // Special handling for empty pattern
     if (this.originalPattern === "") {
-      return replacement + str;
+      return (replacement as string) + str;
     }
 
     if (!this.global) {
       // If no global flag, replace only once
-      return str.replace(this, replacement as any);
+      return str.replace(
+        this,
+        replacement as (substring: string, ...args: string[]) => string,
+      );
     }
     const lastIndex = this.lastIndex;
     this.lastIndex = 0;
-    const result = str.replace(this, replacement as any);
+    const result = str.replace(
+      this,
+      replacement as (substring: string, ...args: string[]) => string,
+    );
     this.lastIndex = lastIndex;
     return result;
   }
@@ -233,11 +241,14 @@ export default class RegExt extends RegExp {
    */
   replaceFirst(
     str: string,
-    replacement: string | ((substring: string, ...args: any[]) => string)
+    replacement: string | ((substring: string, ...args: unknown[]) => string),
   ): string {
     const lastIndex = this.lastIndex;
     const nonGlobalRegex = new RegExp(this.source, this.flags.replace("g", ""));
-    const result = str.replace(nonGlobalRegex, replacement as any);
+    const result = str.replace(
+      nonGlobalRegex,
+      replacement as (substring: string, ...args: string[]) => string,
+    );
     this.lastIndex = lastIndex;
     return result;
   }
@@ -311,12 +322,13 @@ export default class RegExt extends RegExp {
       const { index: start, 0: matchText } = matches[i];
 
       // Add unmatched chunk before match (if any)
-      pos < start &&
+      if (pos < start) {
         result.push({
           text: str.slice(pos, start),
           isMatch: false,
           index: pos,
         });
+      }
 
       // Add matched chunk
       result.push({ text: matchText, isMatch: true, index: start });
@@ -324,8 +336,9 @@ export default class RegExt extends RegExp {
     }
 
     // Add final unmatched chunk (if any)
-    pos < str.length &&
+    if (pos < str.length) {
       result.push({ text: str.slice(pos), isMatch: false, index: pos });
+    }
 
     return result;
   }

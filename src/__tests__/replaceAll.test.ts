@@ -1,5 +1,5 @@
-import { describe, it, expect, beforeEach } from "vitest";
-import RegExt from "../src/index";
+import { describe, it, expect } from "vitest";
+import RegExt from "../index";
 
 describe("RegExt - replaceAll", () => {
   it("should replace all matches with global flag", () => {
@@ -43,7 +43,7 @@ describe("RegExt - replaceAll", () => {
     const groupRegex = new RegExt("(\\d+)-(\\d+)", "g");
     const result = groupRegex.replaceAll(
       "123-456 789-012",
-      (match, p1, p2) => `${p2}:${p1}`
+      (_match, p1, p2) => `${p2}:${p1}`,
     );
     expect(result).toBe("456:123 012:789");
   });

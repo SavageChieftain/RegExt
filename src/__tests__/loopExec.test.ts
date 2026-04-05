@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from "vitest";
-import RegExt from "../src/index";
+import RegExt from "../index";
 
 describe("RegExt - loopExec", () => {
   let regex: RegExt;
