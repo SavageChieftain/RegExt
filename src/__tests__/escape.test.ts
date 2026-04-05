@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { escape } from "../src/utils/escape";
+import { escape } from "../utils/escape";
 
 describe("escape", () => {
   it("should escape special regex characters", () => {

@@ -32,10 +32,10 @@
     "node": ">=24.0.0"
   },
   "type": "module",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "./dist/src/index.js",
+  "types": "./dist/src/index.d.ts",
   "files": [
-    "dist/",
+    "./dist/",
     "README.md",
     "LICENSE",
     "CHANGELOG.md"
@@ -51,11 +51,14 @@
     "prepare": "lefthook install",
     "prepublishOnly": "npm run clean && npm run build && npm run lint && npm run lint:md && npm run type-check && npm run test"
   },
+  "overrides": {
+    "smol-toml": ">=1.6.1"
+  },
   "devDependencies": {
-    "@commitlint/cli": "^20.2.0",
+    "@commitlint/cli": "^20.5.0",
     "@commitlint/config-conventional": "^20.0.0",
     "@eslint/create-config": "^1.9.0",
-    "@eslint/js": "^9.28.0",
+    "@eslint/js": "^10.0.1",
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/git": "^10.0.1",
     "@semantic-release/github": "^12.0.2",
@@ -63,12 +66,13 @@
     "@types/node": "^22.15.29",
     "@vitest/coverage-v8": "^4.0.17",
     "@vitest/ui": "^4.0.17",
-    "eslint": "^9.28.0",
+    "eslint": "^10.2.0",
     "lefthook": "^2.0.15",
-    "markdownlint-cli2": "^0.20.0",
+    "markdownlint-cli2": "^0.22.0",
     "semantic-release": "^25.0.1",
     "tsx": "^4.19.4",
-    "typescript": "^5.8.3",
+    "typescript": "^6.0.2",
+    "typescript-eslint": "^8.58.0",
     "vitest": "^4.0.17"
   }
 }

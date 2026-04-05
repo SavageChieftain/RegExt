@@ -1,5 +1,5 @@
-import { describe, it, expect, beforeEach } from "vitest";
-import RegExt from "../src/index";
+import { describe, it, expect } from "vitest";
+import RegExt from "../index";
 
 describe("RegExt - integration tests", () => {
   it("should work with chained method calls", () => {
@@ -30,7 +30,7 @@ describe("RegExt - integration tests", () => {
   it("should handle complex real-world patterns", () => {
     const emailRegex = new RegExt(
       "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}",
-      "g"
+      "g",
     );
     const text = "Contact us at support@example.com or admin@test.org";
 
@@ -129,7 +129,7 @@ function test() {
 
   it("should handle password strength validation", () => {
     const strongPasswordRegex = new RegExt(
-      "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$"
+      "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$",
     );
 
     expect(strongPasswordRegex.safeTest("Weak123")).toBe(false);
@@ -202,7 +202,7 @@ function test() {
     const cardRegex = new RegExt("(\\d{4})-(\\d{4})-(\\d{4})-(\\d{4})", "g");
     const text = "Card: 1234-5678-9012-3456";
 
-    const masked = cardRegex.replaceAll(text, (_, p1, p2, p3, p4) => {
+    const masked = cardRegex.replaceAll(text, (_, p1, _p2, _p3, p4) => {
       return `${p1}-****-****-${p4}`;
     });
     expect(masked).toBe("Card: 1234-****-****-3456");

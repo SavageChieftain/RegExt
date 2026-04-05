@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import RegExt, { TextChunk } from "../src/index";
+import RegExt, { TextChunk } from "../index";
 
 describe("RegExt - chunks", () => {
   describe("global flag behavior", () => {
@@ -129,7 +129,7 @@ describe("RegExt - chunks", () => {
       const regex = new RegExt("😀", { escape: true, flags: "g" });
       const chunks = regex.chunks("hello😀world");
       expect(chunks).toContainEqual(
-        expect.objectContaining({ text: "😀", isMatch: true })
+        expect.objectContaining({ text: "😀", isMatch: true }),
       );
     });
   });
@@ -234,7 +234,7 @@ describe("RegExt - chunks", () => {
       // Verify indices are correct
       chunks.forEach((chunk) => {
         expect(text.slice(chunk.index, chunk.index + chunk.text.length)).toBe(
-          chunk.text
+          chunk.text,
         );
       });
     });
