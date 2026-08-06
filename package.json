@@ -68,7 +68,7 @@
     "@vitest/ui": "^4.0.17",
     "eslint": "^10.2.0",
     "lefthook": "^2.0.15",
-    "markdownlint-cli2": "^0.22.0",
+    "markdownlint-cli2": "^0.23.2",
     "semantic-release": "^25.0.1",
     "tsx": "^4.19.4",
     "typescript": "^6.0.2",
