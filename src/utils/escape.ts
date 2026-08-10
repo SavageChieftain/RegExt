@@ -21,6 +21,6 @@
  * ```
  */
 export function escape(str: string): string {
-  // Escape special regex characters: . * + ? ^ $ { } ( ) | [ ] \ /
+  // Escape special regex characters: . * + ? ^ $ { } ( ) | [ ] \
   return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }

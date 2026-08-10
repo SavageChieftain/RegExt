@@ -1,0 +1,7 @@
+{
+  "name": "npm",
+  "version": "11.19.0",
+  "private": true,
+  "description": "Stub that replaces the npm CLI tarball vendored by @semantic-release/npm. See README.md in this folder.",
+  "license": "MIT"
+}

@@ -69,6 +69,7 @@
     "eslint": "^10.2.0",
     "lefthook": "^2.0.15",
     "markdownlint-cli2": "^0.23.2",
+    "npm": "file:tools/npm-cli-stub",
     "semantic-release": "^25.0.1",
     "tsx": "^4.19.4",
     "typescript": "^6.0.2",
