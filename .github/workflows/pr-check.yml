@@ -3,6 +3,8 @@ name: PR Check
 on:
   pull_request:
     branches: [main]
+  push:
+    branches: [main]
 
 jobs:
   test:
@@ -40,6 +42,7 @@ jobs:
         uses: codecov/codecov-action@v7
         if: matrix.node-version == 24
         with:
+          token: ${{ secrets.CODECOV_TOKEN }}
           flags: unittests
           name: codecov-umbrella
           fail_ci_if_error: false
