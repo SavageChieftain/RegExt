@@ -52,6 +52,7 @@
     "prepublishOnly": "npm run clean && npm run build && npm run lint && npm run lint:md && npm run type-check && npm run test"
   },
   "overrides": {
+    "katex": ">=0.18.2",
     "smol-toml": ">=1.6.1"
   },
   "devDependencies": {
@@ -64,16 +65,20 @@
     "@semantic-release/github": "^12.0.2",
     "@semantic-release/npm": "^13.1.2",
     "@types/node": "^22.15.29",
-    "@vitest/coverage-v8": "^4.0.17",
-    "@vitest/ui": "^4.0.17",
+    "@vitest/coverage-v8": "^4.1.12",
+    "@vitest/ui": "^4.1.12",
     "eslint": "^10.2.0",
     "lefthook": "^2.0.15",
-    "markdownlint-cli2": "^0.23.2",
+    "markdownlint-cli2": "^0.24.0",
     "npm": "file:tools/npm-cli-stub",
-    "semantic-release": "^25.0.1",
+    "semantic-release": "^25.0.9",
     "tsx": "^4.19.4",
     "typescript": "^6.0.2",
     "typescript-eslint": "^8.58.0",
-    "vitest": "^4.0.17"
+    "vitest": "^4.1.12"
+  },
+  "allowScripts": {
+    "esbuild": true,
+    "lefthook": false
   }
 }
